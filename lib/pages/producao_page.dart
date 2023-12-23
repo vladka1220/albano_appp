@@ -58,7 +58,7 @@ class _ProducaoPageState extends State<ProducaoPage> {
   TextFormField _buildNumericFormField(
       String label, TextEditingController controller) {
     return TextFormField(
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.number, //input inly numbers on keyboard
       controller: controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
@@ -93,9 +93,13 @@ class _ProducaoPageState extends State<ProducaoPage> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       // Извлекаем данные из контроллеров
+      // ignore: unused_local_variable
       final int ref = int.parse(refController.text);
+      // ignore: unused_local_variable
       final int lote = int.parse(loteController.text);
+      // ignore: unused_local_variable
       final int numeroDaBobine = int.parse(numeroDaBobineController.text);
+      // ignore: unused_local_variable
       final int quantidade = int.parse(quantidadeController.text);
       observacoes = observacoesController.text;
 
