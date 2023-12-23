@@ -21,13 +21,34 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Text(
-          'Привет, мир!',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.secondary,
-            fontFamily: Theme.of(context).textTheme.titleLarge?.fontFamily,
-          ),
+      body: GridView.count(
+        crossAxisCount: 2,
+        children: <Widget>[
+          _buildCard(context, 'Producao', Icons.production_quantity_limits,
+              const ProducaoPage()),
+          _buildCard(context, 'Plastificacao', Icons.layers,
+              const PlastificacaoPage()),
+          _buildCard(context, 'Plano de trabalho', Icons.work,
+              const PlanoDeTrabalhoPage()),
+          _buildCard(context, 'Pedido de material', Icons.request_page,
+              const PedidoDeMaterialPage()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(
+      BuildContext context, String title, IconData icon, Widget page) {
+    return Card(
+      child: InkWell(
+        onTap: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => page)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon, size: 80),
+            Text(title),
+          ],
         ),
       ),
     );
@@ -42,25 +63,25 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.production_quantity_limits),
-              title: const Text('Producao'),
+              title: const Text('Test_Producao'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const ProducaoPage())),
             ),
             ListTile(
               leading: const Icon(Icons.layers),
-              title: const Text('Plastificacao'),
+              title: const Text('Test_Plastificacao'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const PlastificacaoPage())),
             ),
             ListTile(
               leading: const Icon(Icons.work),
-              title: const Text('Plano de trabalho'),
+              title: const Text('Test_Plano de trabalho'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const PlanoDeTrabalhoPage())),
             ),
             ListTile(
               leading: const Icon(Icons.request_page),
-              title: const Text('Pedido de material'),
+              title: const Text('Test_Pedido de material'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const PedidoDeMaterialPage())),
             ),

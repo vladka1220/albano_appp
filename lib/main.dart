@@ -1,8 +1,8 @@
-import 'package:albano_app/theme.dart';
+import 'package:albano_app/customs/theme.dart';
 import 'package:flutter/material.dart';
 
 import '../start_page.dart'; // Путь к вашей стартовой странице
-import 'auth_page.dart'; // Путь к вашей странице авторизации
+import 'auth/auth_page.dart'; // Путь к вашей странице авторизации
 
 void main() {
   runApp(const MyApp());

@@ -1,7 +1,8 @@
-import 'package:albano_app/customs/animated_logo.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import 'customs/credentials.dart';
+import '../customs/animated_logo.dart';
+import '../customs/credentials.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -11,6 +12,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
+  final now = DateTime.now();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool passwordVisible = false;
@@ -37,8 +39,13 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    String formattedDateTime =
+        DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now());
     return Scaffold(
-      appBar: AppBar(title: const Text('Autorização')),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(formattedDateTime),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(30.0),
         child: Center(
@@ -46,7 +53,7 @@ class _AuthPageState extends State<AuthPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const AnimatedLogo(
-                imagePath: 'assets/images/logo2_V1.png', // Путь к логотипу
+                imagePath: 'assets/images/logo2_V1.png',
                 width: 300,
                 height: 250,
               ),
@@ -54,16 +61,16 @@ class _AuthPageState extends State<AuthPage> {
               TextField(
                 controller: usernameController,
                 decoration: const InputDecoration(
-                  border: OutlineInputBorder(), // Прямоугольная граница
+                  border: OutlineInputBorder(),
                   labelText: 'Nome',
                 ),
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: passwordController,
-                obscureText: !passwordVisible, // Скрытие пароля
+                obscureText: !passwordVisible,
                 decoration: InputDecoration(
-                  border: const OutlineInputBorder(), // Прямоугольная граница
+                  border: const OutlineInputBorder(),
                   labelText: 'Pin',
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -73,7 +80,7 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 100),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: login,
                 child: const Text('Entrar'),
@@ -85,6 +92,3 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 }
-
-
-//hhjhjg
