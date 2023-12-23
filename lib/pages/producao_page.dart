@@ -10,11 +10,14 @@ class ProducaoPage extends StatefulWidget {
 class _ProducaoPageState extends State<ProducaoPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Переменные для хранения данных формы
-  late int ref;
-  late int lote;
-  late int numeroDaBobine;
-  late int quantidade;
+// Контроллеры для полей ввода
+  final TextEditingController refController = TextEditingController();
+  final TextEditingController loteController = TextEditingController();
+  final TextEditingController numeroDaBobineController =
+      TextEditingController();
+  final TextEditingController quantidadeController = TextEditingController();
+  final TextEditingController observacoesController = TextEditingController();
+
   late String observacoes;
 
   @override
@@ -24,20 +27,23 @@ class _ProducaoPageState extends State<ProducaoPage> {
         title: const Text('Producao'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(40.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              _buildNumericFormField('Ref', (value) => ref = int.parse(value!)),
+              const SizedBox(height: 70), // Отступ между полями
+              _buildNumericFormField('Ref', refController),
+              const SizedBox(height: 20), // Отступ между полями
+              _buildNumericFormField('Lote', loteController),
+              const SizedBox(height: 20), // Отступ между полями
               _buildNumericFormField(
-                  'Lote', (value) => lote = int.parse(value!)),
-              _buildNumericFormField('Numero da bobine',
-                  (value) => numeroDaBobine = int.parse(value!)),
-              _buildNumericFormField(
-                  'Quantidade', (value) => quantidade = int.parse(value!)),
-              _buildTextFormField(
-                  'Observacoes', (value) => observacoes = value!),
+                  'Numero da bobine', numeroDaBobineController),
+              const SizedBox(height: 20), // Отступ между полями
+              _buildNumericFormField('Quantidade', quantidadeController),
+              const SizedBox(height: 20), // Отступ между полями
+              _buildTextFormField('Observacoes', observacoesController),
+              const SizedBox(height: 40), // Отступ между полями
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text('Отправить'),
@@ -49,14 +55,15 @@ class _ProducaoPageState extends State<ProducaoPage> {
     );
   }
 
-  TextFormField _buildNumericFormField(String label, Function(String?) onSave) {
+  TextFormField _buildNumericFormField(
+      String label, TextEditingController controller) {
     return TextFormField(
       keyboardType: TextInputType.number,
+      controller: controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: label,
       ),
-      onSaved: onSave,
       validator: (value) {
         if (value == null || value.isEmpty || int.tryParse(value) == null) {
           return 'Введите целое число';
@@ -66,13 +73,14 @@ class _ProducaoPageState extends State<ProducaoPage> {
     );
   }
 
-  TextFormField _buildTextFormField(String label, Function(String?) onSave) {
+  TextFormField _buildTextFormField(
+      String label, TextEditingController controller) {
     return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: label,
       ),
-      onSaved: onSave,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Пожалуйста, заполните это поле';
@@ -84,9 +92,15 @@ class _ProducaoPageState extends State<ProducaoPage> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+      // Извлекаем данные из контроллеров
+      final int ref = int.parse(refController.text);
+      final int lote = int.parse(loteController.text);
+      final int numeroDaBobine = int.parse(numeroDaBobineController.text);
+      final int quantidade = int.parse(quantidadeController.text);
+      observacoes = observacoesController.text;
+
       // Отправка данных на сервер
-      // sendDataToServer();
+      // sendDataToServer(ref, lote, numeroDaBobine, quantidade, observacoes);
     }
   }
 
