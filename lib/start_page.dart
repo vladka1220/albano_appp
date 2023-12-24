@@ -13,7 +13,8 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Главная страница'),
+        title: const Text('Home Page'),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.menu),
@@ -21,17 +22,32 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 2,
-        children: <Widget>[
-          _buildCard(context, 'Producao', Icons.production_quantity_limits,
-              const ProducaoPage()),
-          _buildCard(context, 'Plastificacao', Icons.layers,
-              const PlastificacaoPage()),
-          _buildCard(context, 'Plano de trabalho', Icons.work,
-              const PlanoDeTrabalhoPage()),
-          _buildCard(context, 'Pedido de material', Icons.request_page,
-              const PedidoDeMaterialPage()),
+      body: Column(
+        children: [
+          SizedBox(
+              height: MediaQuery.of(context).size.height *
+                  0.15), // Отступ для AppBar
+          Center(
+            child: Image.asset(
+              'assets/images/logo.png', // Убедитесь, что путь к логотипу верный
+              height: 90, // Высота логотипа
+            ),
+          ),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              children: <Widget>[
+                _buildCard(context, 'Producao',
+                    Icons.production_quantity_limits, const ProducaoPage()),
+                _buildCard(context, 'Plastificacao', Icons.layers,
+                    const PlastificacaoPage()),
+                _buildCard(context, 'Plano de trabalho', Icons.work,
+                    const PlanoDeTrabalhoPage()),
+                _buildCard(context, 'Pedido de material', Icons.request_page,
+                    const PedidoDeMaterialPage()),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -53,7 +53,7 @@ class _AuthPageState extends State<AuthPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const AnimatedLogo(
-                imagePath: 'assets/images/logo2_V1.png',
+                imagePath: 'assets/images/logo.png',
                 width: 300,
                 height: 250,
               ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+
+import '../customs/barcode_scanner_service.dart';
 
 class ProducaoPage extends StatefulWidget {
   const ProducaoPage({super.key});
@@ -23,36 +26,96 @@ class _ProducaoPageState extends State<ProducaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Producao'),
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(25.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              const SizedBox(height: 70), // Отступ между полями
+              const Text(
+                'Producao',
+                style: TextStyle(fontSize: 30.0),
+              ),
+              const SizedBox(height: 40), // Отступ после заголовка
               _buildNumericFormField('Ref', refController),
               const SizedBox(height: 20), // Отступ между полями
               _buildNumericFormField('Lote', loteController),
+
               const SizedBox(height: 20), // Отступ между полями
-              _buildNumericFormField(
-                  'Numero da bobine', numeroDaBobineController),
-              const SizedBox(height: 20), // Отступ между полями
+              TextFormField(
+                controller: numeroDaBobineController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Numero da bobine',
+                  border:
+                      const OutlineInputBorder(), // Здесь устанавливается прямоугольная граница
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.camera_alt),
+                    onPressed: () async {
+                      final barcode = await BarcodeScannerService.scanBarcode();
+                      if (barcode != null) {
+                        setState(() {
+                          numeroDaBobineController.text = barcode;
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20), // Отступ после поля сканирования
               _buildNumericFormField('Quantidade', quantidadeController),
               const SizedBox(height: 20), // Отступ между полями
               _buildTextFormField('Observacoes', observacoesController),
-              const SizedBox(height: 40), // Отступ между полями
+              const SizedBox(height: 40), // Отступ перед кнопкой
               ElevatedButton(
                 onPressed: _submitForm,
-                child: const Text('Отправить'),
+                child: const Text('Confirmar'),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  // Сканирование с камеры
+  Widget _buildBarcodeFormField(
+      String label, TextEditingController controller) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: label,
+            ),
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.camera_alt),
+          onPressed: scanBarcode,
+        ),
+      ],
+    );
+  }
+
+  Future<void> scanBarcode() async {
+    final barcode = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Цвет линии сканера
+      'Cancel', // Текст кнопки отмены
+      true, // Использовать фонарик
+      ScanMode.BARCODE, // Режим сканирования
+    );
+
+    if (barcode != '-1') {
+      setState(() {
+        numeroDaBobineController.text = barcode;
+      });
+    }
   }
 
   TextFormField _buildNumericFormField(

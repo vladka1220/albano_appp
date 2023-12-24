@@ -21,15 +21,19 @@ class _PlastificacaoPageState extends State<PlastificacaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plastificacao'),
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
+              const Text(
+                'Plastificacao',
+                style: TextStyle(
+                  fontSize: 30.0,
+                ),
+              ),
               const SizedBox(height: 70), // Отступ между полями
               _buildNumericFormField('Ref', refController),
               const SizedBox(height: 20), // Отступ между полями
@@ -41,7 +45,7 @@ class _PlastificacaoPageState extends State<PlastificacaoPage> {
               const SizedBox(height: 40), // Отступ между полями
               ElevatedButton(
                 onPressed: _submitForm,
-                child: const Text('Отправить'),
+                child: const Text('Confirmar'),
               ),
             ],
           ),
