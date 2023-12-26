@@ -16,6 +16,7 @@ dependencies:
   local_auth: ^2.1.7
   http: ^1.1.2 
   flutter_barcode_scanner: ^2.0.0 
+  shared_preferences: ^2.0.6
 
   cupertino_icons: ^1.0.2
 

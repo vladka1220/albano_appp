@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'dart:convert';
 
-import '../customs/barcode_scanner_service.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../customs/dados_da bobine/BobinaDetailsPage.dart';
 
 class ProducaoPage extends StatefulWidget {
   const ProducaoPage({super.key});
@@ -12,21 +14,39 @@ class ProducaoPage extends StatefulWidget {
 
 class _ProducaoPageState extends State<ProducaoPage> {
   final _formKey = GlobalKey<FormState>();
-
-// Контроллеры для полей ввода
   final TextEditingController refController = TextEditingController();
   final TextEditingController loteController = TextEditingController();
-  final TextEditingController numeroDaBobineController =
-      TextEditingController();
   final TextEditingController quantidadeController = TextEditingController();
   final TextEditingController observacoesController = TextEditingController();
+  final TextEditingController numeroDaBobineController =
+      TextEditingController();
 
   late String observacoes;
+  List<String> bobinasData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadBobinasData();
+  }
+
+  Future<void> loadBobinasData() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? bobinasJsonString = prefs.getString('bobinas_data');
+    if (bobinasJsonString != null) {
+      List<dynamic> bobinasJson = jsonDecode(bobinasJsonString) as List;
+      setState(() {
+        bobinasData = bobinasJson.map((json) => json.toString()).toList();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Producao'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(25.0),
         child: Form(
@@ -37,38 +57,39 @@ class _ProducaoPageState extends State<ProducaoPage> {
                 'Producao',
                 style: TextStyle(fontSize: 30.0),
               ),
-              const SizedBox(height: 40), // Отступ после заголовка
+              const SizedBox(height: 40),
               _buildNumericFormField('Ref', refController),
-              const SizedBox(height: 20), // Отступ между полями
+              const SizedBox(height: 20),
               _buildNumericFormField('Lote', loteController),
-
-              const SizedBox(height: 20), // Отступ между полями
-              TextFormField(
+              const SizedBox(height: 20),
+              TextField(
                 controller: numeroDaBobineController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Numero da bobine',
-                  border:
-                      const OutlineInputBorder(), // Здесь устанавливается прямоугольная граница
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.camera_alt),
-                    onPressed: () async {
-                      final barcode = await BarcodeScannerService.scanBarcode();
-                      if (barcode != null) {
-                        setState(() {
-                          numeroDaBobineController.text = barcode;
-                        });
-                      }
-                    },
-                  ),
+                  border: OutlineInputBorder(),
                 ),
+                readOnly: true, // Сделать поле только для чтения
               ),
+              ElevatedButton(
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BobinaDetailsPage(),
+                    ),
+                  );
 
-              const SizedBox(height: 20), // Отступ после поля сканирования
+                  // Обновление поля номера бобины после возврата
+                  if (result != null) {
+                    numeroDaBobineController.text = result;
+                  }
+                },
+                child: const Text('Добавить данные бобины'),
+              ),
               _buildNumericFormField('Quantidade', quantidadeController),
-              const SizedBox(height: 20), // Отступ между полями
+              const SizedBox(height: 20),
               _buildTextFormField('Observacoes', observacoesController),
-              const SizedBox(height: 40), // Отступ перед кнопкой
+              const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text('Confirmar'),
@@ -80,48 +101,10 @@ class _ProducaoPageState extends State<ProducaoPage> {
     );
   }
 
-  // Сканирование с камеры
-  Widget _buildBarcodeFormField(
-      String label, TextEditingController controller) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: TextFormField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: label,
-            ),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.camera_alt),
-          onPressed: scanBarcode,
-        ),
-      ],
-    );
-  }
-
-  Future<void> scanBarcode() async {
-    final barcode = await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Цвет линии сканера
-      'Cancel', // Текст кнопки отмены
-      true, // Использовать фонарик
-      ScanMode.BARCODE, // Режим сканирования
-    );
-
-    if (barcode != '-1') {
-      setState(() {
-        numeroDaBobineController.text = barcode;
-      });
-    }
-  }
-
   TextFormField _buildNumericFormField(
       String label, TextEditingController controller) {
     return TextFormField(
-      keyboardType: TextInputType.number, //input inly numbers on keyboard
+      keyboardType: TextInputType.number,
       controller: controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
@@ -153,28 +136,24 @@ class _ProducaoPageState extends State<ProducaoPage> {
     );
   }
 
+  // Отправка данных на сервер
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Извлекаем данные из контроллеров
       // ignore: unused_local_variable
       final int ref = int.parse(refController.text);
       // ignore: unused_local_variable
       final int lote = int.parse(loteController.text);
-      // ignore: unused_local_variable
-      final int numeroDaBobine = int.parse(numeroDaBobineController.text);
-      // ignore: unused_local_variable
-      final int quantidade = int.parse(quantidadeController.text);
       observacoes = observacoesController.text;
 
       // Отправка данных на сервер
-      // sendDataToServer(ref, lote, numeroDaBobine, quantidade, observacoes);
+      // sendDataToServer(ref, lote, bobinasData, quantidadeController.text, observacoes);
+      // Очищаем список бобин после отправки
+      setState(() {
+        bobinasData.clear();
+      });
     }
   }
 
-  // Пример функции для отправки данных на сервер (закомментировано)
-  /*
-  void sendDataToServer() async {
-    // Здесь код для отправки данных на сервер, например, через http.post
-  }
-  */
+  // Функция для отправки данных на сервер
+  // void sendDataToServer(int ref, int lote, List<String> bobinas, String quantidade, String observacoes) async {...}
 }

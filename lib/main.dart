@@ -1,5 +1,6 @@
 import 'package:albano_app/customs/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../start_page.dart'; // Путь к вашей стартовой странице
 import 'auth/auth_page.dart'; // Путь к вашей странице авторизации
@@ -29,4 +30,11 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+//впеменный для json
+Future<void> printSharedPreferences() async {
+  final prefs = await SharedPreferences.getInstance();
+  print(
+      "SharedPreferences data: ${prefs.getKeys().map((key) => '$key: ${prefs.get(key)}').join(', ')}");
 }
